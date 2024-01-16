@@ -26,7 +26,7 @@ def Joueur(couleur, nom, nb_points, nb_faux_mvt, pos_pacman, pos_fantome, objets
     """
     dico_joueur = {"nom" : nom, "couleur" : couleur, "nb_points" : nb_points, "nb_faux_mvt" : nb_faux_mvt, "pos_pacman": pos_pacman, "pos_fantome": pos_fantome, "objets" : objets} 
     return dico_joueur
-    #On crée un dictionnnaire 
+    #On crée un dictionnnaire contenant les différents attributs d'un joueur 
 
 
 def joueur_from_str(description):
@@ -61,7 +61,7 @@ def get_couleur(joueur):
     Returns:
         str: une lettre indiquant la couleur du joueur
     """
-    return joueur["couleur"]
+    return joueur["couleur"]   #On récupère le couleur dans le dictionnaire joueur grâce à la clé 'couleur'
 
 
 def get_nom(joueur):

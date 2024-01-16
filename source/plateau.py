@@ -212,17 +212,57 @@ def plateau(la_chaine, complet=True):
     Returns:
         dict: le plateau correspondant à la chaine. None si l'opération a échoué
     """
-    matrice_chargee = []
-    with open(la_chaine, 'r') as fichier_csv:
-        reader = csv.reader(fichier_csv)
-        for ligne in reader:
-            matrice_chargee.extend(map(int, ligne))
-    nombre_lignes = len(matrice_chargee) // len(ligne)
-    nombre_colonnes = len(ligne)
-    return [(nombre_lignes, nombre_colonnes), matrice_chargee]
+    plateau = {}
+    nouvelle_chaine = la_chaine.split("\n")[1:]
+    i = -1
+    res = False
+    while not res and i < len(nouvelle_chaine) :
+        i = i+1
+        if nouvelle_chaine[i][0] in '0123456789':
+            res = True
+            cases = nouvelle_chaine[:i]
+            donnees_persos = nouvelle_chaine[i:-1]
 
+    tours = 0
+    for donnees in donnees_persos :
+        tours += 1
+        if tours < 2 :
+            nb = int(donnees)
+            pacmans = donnees_persos[1:nb+1]
+            donnees_persos = donnees_persos[nb+1:]
+        else :
+            nb = int(donnees)
+            fantomes = donnees_persos[1:nb+1]
     
-    
+    tt_cases = []
+    nb_lignes = 0
+    for lin in cases :
+        nb_lignes += 1
+        for caractere in lin :
+
+            if caractere == "#":
+                temp = case.Case(True,...)
+            elif caractere == const.LES_OBJETS:
+                temp = case.Case(False, caractere, ... )
+            else :
+                temp = case.Case(False,...,)
+            tt_cases.append(temp)
+
+        plateau[nb_lignes] = tt_cases
+
+    for pac in pacmans :
+        liste_donnees_p = pac.split(";")
+        nom_p = liste_donnees_p[0]
+        pos_p = tuple(int(liste_donnees_p[1]), int(liste_donnees_p[2]))
+        plateau[pos_p[0]][pos_p[1]]['pacman'].add(nom_p)
+        
+    for fan in fantomes :
+        liste_donnees_f = fan.split(",")
+        nom_f = liste_donnees_f[0]
+        pos_f = tuple(int(liste_donnees_f[1]), int(liste_donnees_f[2]))
+        plateau[pos_f[0]][pos_f[1]]['fantome'].add(nom_f)
+
+    return plateau
     
     
     
@@ -444,10 +484,10 @@ def prochaine_intersection(plateau,pos,direction):  #Lenny / Sargis
         int: un entier indiquant la distance à la prochaine intersection
              -1 si la direction mène à un cul de sac.
     """
-    proch_pos =pos_arrivee(plateau,pos,direction)
-    dirc = directions_possibles(plateau,proch_pos)
-    nb_dirc = len(dirc) -1
-    distance = 1
+    proch_pos =pos_arrivee(plateau,pos,direction) #on avance
+    dirc = directions_possibles(plateau,proch_pos) #les chemains possible
+    nb_dirc = len(dirc) -1 #le nb de chemains moins d'ou on viens
+    distance = 1    #
     if nb_dirc == 0:
         return -1 
     if nb_dirc > 1:
