@@ -24,8 +24,9 @@ def Joueur(couleur, nom, nb_points, nb_faux_mvt, pos_pacman, pos_fantome, objets
     Returns:
         dict: un dictionnaire représentant le joueur
     """
-    dico_joueur = {"nom" : nom, "couleur" : couleur, "nb_points" : nb_points, "nb_faux_mvt" : nb_faux_mvt, "pos_pacman": pos_pacman, "pos_fantome": pos_fantome, "objets" : objets}
+    dico_joueur = {"nom" : nom, "couleur" : couleur, "nb_points" : nb_points, "nb_faux_mvt" : nb_faux_mvt, "pos_pacman": pos_pacman, "pos_fantome": pos_fantome, "objets" : objets} 
     return dico_joueur
+    #On crée un dictionnnaire 
 
 
 def joueur_from_str(description):

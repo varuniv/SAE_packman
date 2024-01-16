@@ -212,7 +212,15 @@ def plateau(la_chaine, complet=True):
     Returns:
         dict: le plateau correspondant à la chaine. None si l'opération a échoué
     """
-    ligne1 = la_chaine.readline()
+    matrice_chargee = []
+    with open(la_chaine, 'r') as fichier_csv:
+        reader = csv.reader(fichier_csv)
+        for ligne in reader:
+            matrice_chargee.extend(map(int, ligne))
+    nombre_lignes = len(matrice_chargee) // len(ligne)
+    nombre_colonnes = len(ligne)
+    return [(nombre_lignes, nombre_colonnes), matrice_chargee]
+
     
     
     
@@ -310,8 +318,6 @@ def deplacer_pacman(plateau, pacman, pos, direction, passemuraille=False):
     
     pos_arrive = pos_arrivee(plateau,pos,direction)
     la_case = get_case(plateau,pos_arrive)
-    if pacman in la_case['pacman'] :
-        return pos_arrive
     if est_mur(plateau,pos_arrive):
         if passemuraille == False :
             return None
@@ -337,10 +343,10 @@ def deplacer_fantome(plateau, fantome, pos, direction): #Lucas
                    None si le joueur n'a pas pu se déplacer
     """
     pos_arrive = pos_arrivee(plateau,pos,direction)
+    la_case = get_case(plateau,pos_arrive)
     if est_mur(plateau,pos_arrive):
          return None
     else :
-            la_case = get_case(plateau,pos_arrive)
             poser_pacman(la_case,fantome) 
             return pos_arrive     
 
@@ -413,13 +419,19 @@ def analyse_plateau(plateau, pos, direction, distance_max): #Sargis
             S'il n'est pas possible d'aller dans la direction indiquée à partir de pos
             la fonction retourne None
     """
+    nb_lignes = get_nb_lignes(plateau)
+    nb_colonnes =get_nb_colonnes(plateau)
+
     res = {'objets':[] , 'pacmans':[] , 'fantomes': []}
     distance = 0
+    ident = 0
     dir = directions_possibles(plateau,pos)
-    while distance < distance and direction in dir:
+    while distance < distance_max and direction in dir:
+        
         ...
 
-def prochaine_intersection(plateau,pos,direction):  #Lenny
+
+def prochaine_intersection(plateau,pos,direction):  #Lenny / Sargis
     """calcule la distance de la prochaine intersection
         si on s'engage dans la direction indiquée
 
@@ -440,14 +452,28 @@ def prochaine_intersection(plateau,pos,direction):  #Lenny
         return -1 
     if nb_dirc > 1:
         return distance
-    else: #1 chemain possible
-        for d in dirc:
-            if not d == direction:
-                inter = prochaine_intersection(plateau,proch_pos,d)
-                if inter == -1:
-                    return -1
-                else:
-                    return distance + inter
+    else: #1 chemin possible, len de dirc == 2 
+        if direction in dirc:
+            inter = prochaine_intersection(plateau,proch_pos,direction)
+            if inter == -1:
+                return -1
+            else:
+                return distance + inter
+        else:
+            inverse = 'SONE'
+            i_inverse = dirc.find(direction)
+            d = inverse[i_inverse] 
+            if dirc[0] == d :
+                d = dirc[1]
+            else:
+                d = dirc[0]
+            inter = prochaine_intersection(plateau,proch_pos,d)
+            if inter == -1:
+                return -1
+            else:
+                return distance + inter
+
+
     
 
 

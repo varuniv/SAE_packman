@@ -23,11 +23,11 @@ def Case(mur=False, objet=const.AUCUN, pacmans_presents=None, fantomes_presents=
     Returns:
         dict: un dictionnaire représentant une case du plateau
     """
-    if pacmans_presents == None:
-        pacmans_presents = set()
-    if fantomes_presents == None:
-        fantomes_presents = set()
-    return {'mur': mur, 'objet':objet, 'pacman':pacmans_presents, 'fantome':fantomes_presents}
+    if pacmans_presents == None:   #Si il n'y a aucun pacman présents 
+        pacmans_presents = set()         #On crée un ensemble vide
+    if fantomes_presents == None:    #Si il n'y a aucun fantomes présents 
+        fantomes_presents = set()       #On crée un ensemble vide
+    return {'mur': mur, 'objet':objet, 'pacman':pacmans_presents, 'fantome':fantomes_presents}   #On renvoie la case créée avec les différentes clés 
 
 
 
@@ -40,7 +40,7 @@ def est_mur(case):
     Returns:
         bool: True si la case est un mur et False sinon
     """
-    return case['mur']
+    return case['mur']       #récupère le booleen de la clé 'mur' dans la case, si il est à False alors cela renvoie False, True sinon
 
 
 
@@ -54,7 +54,7 @@ def get_objet(case):
     Returns:
         str: l'identifiant de l'objet qui se trouve sur la case.
     """
-    return case['objet']
+    return case['objet']   #récupère le booleen de la clé 'objet' dans la case, si il est à False alors cela renvoie False, True sinon
 
 
 def get_pacmans(case):
@@ -66,7 +66,7 @@ def get_pacmans(case):
     Returns:
         set: l'ensemble des identifiants de pacmans présents su la case.
     """
-    return case['pacman']
+    return case['pacman']     #récupère le booleen de la clé 'pacman' dans la case, si il est à False alors cela renvoie False, True sinon
 
 def get_fantomes(case):
     """retourne l'ensemble des fantomes qui sont sur la case
@@ -77,7 +77,7 @@ def get_fantomes(case):
     Returns:
         set: l'ensemble des identifiants de fantomes présents su la case.
     """
-    return case['fantome']
+    return case['fantome']        #récupère le booleen de la clé 'fantome' dans la case, si il est à False alors cela renvoie False, True sinon
 
 
 def get_nb_pacmans(case):
@@ -89,7 +89,7 @@ def get_nb_pacmans(case):
     Returns:
         int: le nombre de pacmans présents sur la case.
     """
-    return len(get_pacmans(case))
+    return len(get_pacmans(case))        #récupère la taille de ce que retourne la fonction get_pacmans qui renvoie l'ensemble de tous les pacmans 
 
 def get_nb_fantomes(case):
     """retourne le nombre de fantomes présents sur la case
@@ -100,7 +100,8 @@ def get_nb_fantomes(case):
     Returns:
         int: le nombre de fantomes présents sur la case.
     """
-    return len(get_fantomes(case))
+    return len(get_fantomes(case))    #récupère la taille de ce que retourne la fonction get_pacmans qui renvoie l'ensemble de tous les pacmans 
+
 
 def poser_objet(case, objet):
     """Pose un objet sur la case. Si un objet était déjà présent ce dernier disparait.
@@ -111,8 +112,8 @@ def poser_objet(case, objet):
         objet (str): identifiant d'objet. const.AUCUN indiquant que plus aucun objet se
                 trouve sur la case.
     """
-    if not est_mur(case):
-        case['objet'] = objet
+    if not est_mur(case):           #si il n'y pas de mur à la case où l'on veut poser l'objet alors
+        case['objet'] = objet       #On metl'objet à la clé objet car si un objet était déjà présent, il disparaît (on écrase sa mémoire)
     
 
 def prendre_objet(case):
@@ -125,8 +126,9 @@ def prendre_objet(case):
     Returns:
         char: l'identifiant de l'objet qui se trouve sur la case.
     """
-    obj = get_objet(case)
-    case['objet'] = const.AUCUN
+    obj = get_objet(case)       #On récupère l'objet de la case 
+    case['objet'] = const.AUCUN     #Et on modifie la valeur d'objet dans la case que l'on met à AUCUN
+    return obj
     
 
 def poser_pacman(case, pacman):
@@ -138,7 +140,7 @@ def poser_pacman(case, pacman):
         case (dict): la case considérée
         pacman (str): identifiant du pacman à ajouter sur la case
     """
-    case['pacman'].add(pacman)
+    case['pacman'].add(pacman)  #On ajoute à l'ensemble des pacmans de la case le pacman en paramètre de la fonction 
    
    
 
@@ -153,8 +155,8 @@ def prendre_pacman(case, pacman):
     Returns:
         bool: True si le joueur était bien sur la case et False sinon.
     """
-    present =  pacman in get_pacmans(case)
-    case['pacman'] -= set(pacman)
+    present =  pacman in get_pacmans(case)     #Si le pacman est dans l'ensemble des pacmans du plateau alors present est à True sinon present est à False
+    case['pacman'] -= set(pacman)   #Enlève le pacman de l'ensemble des pacmans            
     return present
 
 def poser_fantome(case, fantome):
@@ -166,8 +168,8 @@ def poser_fantome(case, fantome):
         case (dict): la case considérée
         fantome (str): identifiant du fantome à ajouter sur la case
     """
-    if not est_mur(case):
-        case['fantome'].add(fantome)
+    if not est_mur(case):           #si il n'y pas de mur à la case où l'on veut poser le fantome alors   
+        case['fantome'].add(fantome)     #On ajoute le fantome à l'ensemble de fantomes de la case
    
 
 
@@ -182,6 +184,6 @@ def prendre_fantome(case, fantome):
     Returns:
         bool: True si le fantome était bien sur la case et False sinon.
     """
-    present =  fantome in get_fantomes(case)
-    case['fantome'] -= set(fantome)
+    present =  fantome in get_fantomes(case)  #Si le fantome est dans l'ensemble des fantomes du plateau alors present est à True sinon present est à False
+    case['fantome'] -= set(fantome)    #Enlève le fantome de l'ensemble des fantomes
     return present
