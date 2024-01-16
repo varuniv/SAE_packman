@@ -22,7 +22,7 @@ def get_nb_lignes(plateau):
     Returns:
         int: le nombre de lignes du plateau
     """
-    return len(plateau.keys())  #renvoie le nombre de lignes
+    return plateau['nb_lignes']  #renvoie le nombre de lignes
 
 
 def get_nb_colonnes(plateau):
@@ -34,7 +34,7 @@ def get_nb_colonnes(plateau):
     Returns:
         int: le nombre de colonnes du plateau
     """
-    return len(plateau[0])  #renvoie le nombre de colonnes
+    return plateau['nb_colonnes']  #renvoie le nombre de colonnes
 
     
 
@@ -48,7 +48,7 @@ def pos_ouest(plateau, pos):
         int: un tuple d'entiers
     """
     (position_x,position_y) = pos  
-    return position_x-1,position_y #renvoie la position ouest en enlevant 1 a x  de la position(x,y)
+    return plateau[position_x-1,position_y]  #renvoie la position ouest en enlevant 1 a x  de la position(x,y)
 
 def pos_est(plateau, pos):
     """retourne la position de la case à l'est de pos
@@ -60,7 +60,7 @@ def pos_est(plateau, pos):
         int: un tuple d'entiers
     """
     (position_x,position_y) = pos
-    return position_x+1,position_y # renvoie la position est en ajoutant 1 a x  de la position (x,y)
+    return plateau[position_x+1,position_y]  # renvoie la position est en ajoutant 1 a x  de la position (x,y)
 
 def pos_nord(plateau, pos):
     """retourne la position de la case au nord de pos
@@ -72,7 +72,7 @@ def pos_nord(plateau, pos):
         int: un tuple d'entiers
     """
     (position_x,position_y) = pos
-    return position_x,position_y+1 #renvoie la position nord en enlevant 1 a y de la position(x,y)
+    return plateau[position_x,position_y-1] #renvoie la position nord en enlevant 1 a y de la position(x,y)
 
 def pos_sud(plateau, pos):
     """retourne la position de la case au sud de pos
@@ -84,7 +84,7 @@ def pos_sud(plateau, pos):
         int: un tuple d'entiers
     """
     (position_x,position_y) = pos
-    return position_x,position_y-1 # Renvoie la poition sud en ajoutant 1 a x  de la position(x,y)
+    return plateau[position_x,position_y+1] # Renvoie la poition sud en ajoutant 1 a x  de la position(x,y)
 
 
 
@@ -113,20 +113,20 @@ def pos_arrivee(plateau,pos,direction): #by Le S
         case  'O':
             new_pos = pos_ouest(plateau,pos)
             if borderline_gauche:
-                new_pos = (new_pos[0],col_max)
+                new_pos[1] = col_max
         case  'E':
             new_pos = pos_est(plateau,pos)
             if borderline_droite:
-                new_pos = (new_pos[0],0)
+                new_pos[1] = 0
         case  'N':
             new_pos = pos_nord(plateau,pos)
             if borderline_top:
-                new_pos = (lgn_max,new_pos[1])
+                new_pos[0] = lgn_max
         case  'S':
             new_pos = pos_sud(plateau,pos)
             if borderline_bas:
-                new_pos = (0,new_pos[1])
-    if new_pos is None:
+                new_pos[0] = 0
+    if new_pos is None or new_pos not in plateau:
         return None
     return new_pos
     
@@ -143,8 +143,7 @@ def get_case(plateau, pos):
     Returns:
         dict: La case qui se situe à la position pos du plateau
     """
-    x,y = pos 
-    return plateau[x][y]  # renvoie le tuple de la position qui ce trouve dans le dictionnaire de tableau 
+    return plateau[pos]  # renvoie le tuple de la position qui ce trouve dans le dictionnaire de tableau 
 
 def get_objet(plateau, pos):
     """retourne l'objet qui se trouve à la position pos du plateau
@@ -168,7 +167,7 @@ def est_mur(plateau,pos): #Le S, function sup
     Returns:
         bool: True si la case est un mur et False sinon
     """
-    return case.est_mur(get_case(plateau,pos))   # nous renvoie si la case est un mur
+    return case.est_mur(get_case(plateau,pos))   # nous renvoie si la case est un mur.
 
 def poser_pacman(plateau, pacman, pos):
     """pose un pacman en position pos sur le plateau
@@ -178,7 +177,7 @@ def poser_pacman(plateau, pacman, pos):
         pacman (str): la lettre représentant le pacman
         pos (tuple): une paire (lig,col) de deux int
     """
-    return case.poser_pacman(get_case(plateau,pos),pacman)  #place un pacman dans une case donnée grace a la position donné dans le dictionnaire plateau
+    return case.poser_pacman(get_case(plateau,pos),pacman)
 
 
 def poser_fantome(plateau, fantome, pos):
@@ -189,7 +188,7 @@ def poser_fantome(plateau, fantome, pos):
         fantome (str): la lettre représentant le fantome
         pos (tuple): une paire (lig,col) de deux int
     """
-    return case.poser_fantome(get_case(plateau,pos),fantome) # place un fantome dans une case donné grace a la postion donnee dans le dictionnaire plateau
+    return case.poser_fantome(get_case(plateau,pos),fantome)
 
     
 def poser_objet(plateau, objet, pos):
@@ -201,7 +200,7 @@ def poser_objet(plateau, objet, pos):
         objet (int): un entier représentant l'objet. const.AUCUN indique aucun objet
         pos (tuple): une paire (lig,col) de deux int
     """
-    return case.poser_objet(get_case(plateau,pos),objet) # pose un objet dans une case donner par sa position
+    return case.poser_objet(get_case(plateau,pos),objet)
 
 
 def Plateau(la_chaine, complet=True):
@@ -214,7 +213,7 @@ def Plateau(la_chaine, complet=True):
     Returns:
         dict: le plateau correspondant à la chaine. None si l'opération a échoué
     """
-    plateau = {}   
+    plateau = {}
     nouvelle_chaine = la_chaine.split("\n")[1:]
     i = -1
     res = False
@@ -235,7 +234,7 @@ def Plateau(la_chaine, complet=True):
             fantomes = donnees_persos[1:nb+1]
     
     tt_cases = []
-    nb_lignes = -1
+    nb_lignes = 0
     for lin in cases :
         nb_lignes += 1
         for caractere in lin :
@@ -269,7 +268,7 @@ def Plateau(la_chaine, complet=True):
     
     
 
-#plateau {0: [{case1}, {case2}], 1: [{case1},{case2}]} keys = numero ligne, values 
+#plateau {1: [{case1}, {case2}], 2: [{case1},{case2}]}
     
 
  
@@ -283,10 +282,9 @@ def set_case(plateau, pos, une_case):
         pos (tuple): une paire (lig,col) de deux int
         une_case (dict): la nouvelle case
     """
-    x,y = pos
-    la_case = get_case(plateau, pos) 
-    plateau[x][y] = une_case
-    
+    ancienne_case = get_case(plateau, pos) 
+    ancienne_case = une_case
+    return ancienne_case
 
 
 def enlever_pacman(plateau, pacman, pos):
