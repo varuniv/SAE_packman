@@ -113,23 +113,23 @@ def pos_arrivee(plateau,pos,direction): #by Le S
         case  'O':
             new_pos = pos_ouest(plateau,pos)
             if borderline_gauche:
-                new_pos[1] = col_max
+                new_pos = (new_pos[0] ,com_max)
         case  'E':
             new_pos = pos_est(plateau,pos)
             if borderline_droite:
-                new_pos[1] = 0
+                new_pos = (new_pos[0] ,0)
         case  'N':
             new_pos = pos_nord(plateau,pos)
             if borderline_top:
-                new_pos[0] = lgn_max
+                new_pos = (lgn_max,new_pos[1]
         case  'S':
             new_pos = pos_sud(plateau,pos)
             if borderline_bas:
-                new_pos[0] = 0
-    if new_pos is None or new_pos not in plateau:
-        return None
-    return new_pos
-    
+                new_pos = (0,new_pos[1])
+    if  0 < new_pos[0] < lgn_max and 0 < new-pos[1] < col_max:    
+            return new_pos
+    else:
+                return None
 
     
 
@@ -285,6 +285,7 @@ def set_case(plateau, pos, une_case):
     ancienne_case = get_case(plateau, pos) 
     ancienne_case = une_case
     return ancienne_case
+            
 
 
 def enlever_pacman(plateau, pacman, pos):
