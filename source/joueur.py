@@ -83,7 +83,7 @@ def get_nb_points(joueur):
     Returns:
         int: la réserve du joueur
     """
-    return joueur["nb_points"]
+    return joueur["nb_points"]    #récupère la valeur de la clé 'nb_points'
 
 
 def get_nb_faux_mvt(joueur):
@@ -93,7 +93,7 @@ def get_nb_faux_mvt(joueur):
     Returns:
         int: le nombre de faux mouvements autorisés du joueur
     """
-    return joueur["nb_faux_mvt"]
+    return joueur["nb_faux_mvt"]    #récupère  la valeur de la clé 'nb_faux_mvt'
 
 
 def get_objets(joueur):

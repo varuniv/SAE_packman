@@ -1,15 +1,15 @@
-#
+
 import unittest
 import const
 import plateau
 import case
 class test_case(unittest.TestCase):  
     def setUp(self):
-        with open("cartes/test1.txt") as fic:
+        with open("/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test1.txt") as fic:
             self.plateau1=fic.read()
-        with open("cartes/test2.txt") as fic:
+        with open("/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test2.txt") as fic:
             self.plateau2=fic.read()
-        with open("cartes/test3.txt") as fic:
+        with open("/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test3.txt") as fic:
             self.plateau3=fic.read()
 
 
