@@ -151,7 +151,7 @@ class Table_Clients(object):
 
 class JeuThread(threading.Thread):
 
-    def __init__(self, ecouteur, table_clients, duree, nom_partie='score.csv', map='/home/limet/AP/splat_iuto/source/cartes/carte.txt'):
+    def __init__(self, ecouteur, table_clients, duree, nom_partie='score.csv', map='/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/cartes/carte.txt'):
         super().__init__()
         self.ecouteur=ecouteur
         self.table_clients = table_clients
@@ -340,7 +340,7 @@ if __name__ == '__main__':
     # parser.add_argument("--empl_tournoi", dest="empl_tournoi", help="emplacement du tournoi", type=str, default='.')
     parser.add_argument("--nom_partie", dest="nom_partie", help="nom de la partie", type=str, default='score.csv')
     parser.add_argument("--duree", dest="duree", help="nombre de tours de la partie", type=int, default=100)
-    parser.add_argument("--map", dest="map", help="fichier contenant la map", type=str, default='cartes/test1.txt')
+    parser.add_argument("--map", dest="map", help="fichier contenant la map", type=str, default='/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test1.txt')
     # parser.add_argument('joueurs', metavar='joueur', type=str, nargs='+', help='les joueurs')
     
     args = parser.parse_args()

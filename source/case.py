@@ -5,7 +5,7 @@
         Module case.pyd
         Ce module contient l'implémentation des cases du plateau de jeus
 """
-import const
+import const 
 
 def Case(mur=False, objet=const.AUCUN, pacmans_presents=None, fantomes_presents=None):
     """Permet de créer une case du plateau

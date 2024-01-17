@@ -4,7 +4,7 @@
 
         Module joueur.py
         Ce module contient l'implémentation de la structure de données
-        qui gère un joueur et ses caractéristiques
+        qui gère un joueur et ses caractéristiques 
 """
 import const
 

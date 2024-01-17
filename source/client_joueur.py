@@ -51,25 +51,134 @@ def mon_IA(ma_couleur,carac_jeu, plan, les_joueurs):
     
     #Instructions pacmans et fantômes
 
-    def zone_définie(...) :
+    def zone_definie(plat, pos_depart, valeur) :   #A tester
         """ Défini une zone précise accessible par le fantôme et le pacman
         
-        
+        Args():
+            plat(dict): le plateau sous forme de dictionnaire
+            pos_depart(tuple): la position du joueur (ligne, colonne)
+            
+
+        Returns :
+            (list) : une liste de tuples avec toutes les positions concernées par le périmètre
         """
+        actuelle = [pos_depart]
+        pos_arrivee = []
+        val = 0
+        while val < valeur :
+            temp = []
+            val += 1
+            for pos in actuelle :
+                direction = plateau.directions_possibles(plat['plateau'], pos)
+                for dir in direction :
+                    case = plateau.pos_arrivee(plat['plateau'], pos, dir)
+                    if not case in pos_arrivee :
+                        temp.append(case)
+                pos_arrivee = pos_arrivee + temp
+            actuelle = temp
+
+        return pos_arrivee 
+    
+
+    def zone_definie_avec_pass(plat, pos_depart, valeur) :   #A tester
+        """ Défini une zone précise accessible par le pacman muni d'un passemuraille
         
+        Args():
+            plat(dict): le plateau sous forme de dictionnaire
+            pos_depart(tuple): la position du joueur (ligne, colonne)
+            
 
-        #if passemuraille
-        plateau.directions_possibles(plateau,pos,True)
+        Returns :
+            (list) : une liste de tuples avec toutes les positions concernées par le périmètre
+        """
+        pass
 
-        #else
-        plateau.directions_possibles(plateau,pos)
+    #def presence_fantome(plat, liste_pos):   #A tester
+    #    """ Trouve la position des fantomes dans la zone
+    #    
+    #    Returns :
+    #        (list): la liste des positions des fantomes. None s'il n'y en a apas
+    #    """
+    #    pos_fantomes = []
+        for pos in liste_pos :
+            if plat['plateau'][pos]['fantome'] != set() :
+                pos_fantomes.append(pos)
+        if len(pos_fantomes) != 0 :
+            return pos_fantomes
+        else :
+            return None
 
 
-    def objets_le_plus_intéressant(liste_pos):
-        """ Trouve l'objet le plus intéressant dans la zone définie"""
-    pass
+    #def presence_pacman(plat, liste_pos):    #A tester
+    #    """ Trouve la position des pacmans dans la zone
+    #    
+    #    Returns :
+    #        (list): la liste des positions des pacmans. None s'il n'y en a pas
+    #    """
+        pos_pacmans = []
+    #    for pos in liste_pos :
+    #        if plat['plateau'][pos]['pacman'] != set() :
+                pos_pacmans.append(pos)
+        if len(pos_pacmans) != 0 :
+            return pos_pacmans
+        else :
+            return None
+#
+#
+    #def plus_proche(plat, item, fantomes, pacmans, joueur):
+    #    """ Compare qui est le plus proche de l'item convoité
+
+        Args():
+            plat(dict) : le plateau de jeu
+            item(tuple) : la position (ligne, colonne) de l'item
+            fantomes(list) : la liste des positions des fantomes présent dans la zone
+            joueur(tuple) : position du joueur concerné
+#
+    #    Returns :
+    #        (str) : 
+    #    """#
+    
+    def objet_le_plus_interessant(plat, liste_pos):    #A tester + changer la fonction si on considère que les VITAMINES ne sont pas intéressantes
+        """ Trouve l'objet le plus intéressant dans la zone définie
+        
+        Args():
+
+            plat(dict): le plateau sous forme de dictionnaire
+            liste_pos(list): la liste de toutes les positions concernées par la zone
+        
+        Returns:
+            (tuple) : la position de l'objet le plus intéressant le plus près
+        """
+        priorite = None
+        for pos in liste_pos :
+            item = plat['plateau'][pos]['objet']
+            if item != '':
+                if item == const.VALEUR and priorite_item != item :
+                    priorite = pos
+                    priorite_item = item
+                elif item == const.GLOUTON and priorite_item != item :
+                    priorite = pos
+                    priorite_item = item
+                elif item == const.PASSEMURAILLE and priorite_item != item :
+                    priorite = pos
+                    priorite_item = item
+                elif item == const.TELEPORTATION and priorite_item != item :
+                    priorite = pos
+                    priorite_item = item
+                elif item == const.IMMOBILITE and priorite_item != item :
+                    priorite = pos
+                    priorite_item = item
+                else :
+                    priorite = pos
+                    priorite_item = item
+        return priorite
 
 
+
+        def direction_pacman():   #décision finale
+            pass
+            #
+    
 
 
 
@@ -110,9 +219,12 @@ analyse['pacmans']
 #On définit un paramètre des alentours qui nous permet d'avoir une vue d'ensemble sur quoi faire
 
 
-#on sélectionne l'objet le plus proche et le plus intéressant (points)
+#on sélectionne l'objet le plus proche et le plus int
+    #        pos_depart(tuple): la position du joueur (ligne, colonne)
+     #       plat(dict): le plateau sous form de dictionnaire
+#éressant (points)
 
-if analyse['objets'][0] < plateau.analyse_plateau #(distance fantome le plus proche / objet voulu)
+#if analyse['objets'][0] < plateau.analyse_plateau #(distance fantome le plus proche / objet voulu)
     #si on est plus proche de l'objet que le fantome, on y va
 
 
@@ -129,6 +241,9 @@ plateau.directions_possibles(...)
 
 
 """ Priorité PACMANS :
+
+            pos_depart(tuple): la position du joueur (ligne, colonne)
+            plat(dict): le plateau sous form de dictionnaire
 
 1. OBJETS :
 - Cerise (&)
@@ -158,14 +273,46 @@ Priorité FANTÔMES :
 - Vitamine (.)
 
 - Si un joueur est dans la zone et qu'un objet est proche, on reste à distance proche de l'objet pour empêcher les pacmans d'approcher
-
 2. DISTANCES :
 - None => on s'approche des objets à grande valeur de la zone
 - Si joueur + Glouton => on sort de la zone partagé avec le joueur et on change de zone
 - Si il n'y a plus d'objets autre que VITAMINE : on change de zone (faux mouvements)
-- Si un joueur
-
-
-
+- Si un joueur est dans la zone alors, il faut se diriger vers sa position 
+-Prendre le plus court chemin vers le pacman 
 
 """
+
+
+#Ia des fantômes
+def pacman_plus_proche(plateau,zone,position_depart,direction):
+    """""
+    Retourne la position du pacman le plus proche 
+        
+    Args:
+            position_depart(tuple): la position du joueur (ligne, colonne)
+            plateau(dict): le plateau sous form de dictionnaire
+            valeur: valeur de la zone autour du fantôme
+
+    Returns :
+            (tuple): position_pacman
+    
+    """""
+    liste_analyse_plateau = list()
+    str_direction_possibles = plateau.directions_possibles(plateau,position_depart,passemuraille=False)
+    for direct in str_direction_possibles:
+        ana_plateau = plateau.analyse_plateau(plateau, position_depart, direct, len(zone) // 2)
+        liste_analyse_plateau.append(ana_plateau)
+        print(liste_analyse_plateau)
+
+
+
+    #liste_coord_pacman_zone = presence_pacman(zone)
+    #nb_lignes_zone = plateau.get_nb_lignes(plateau)
+    #nb_colonnes_zone = plateau.get_nb_colonnes(plateau)    
+    #distance_mini = None
+ #
+    #(xB,yB) = position_depart
+    #for (x,y) in zone :
+    #    if distance_mini is not None or distance_mini < ((xB - x)**2 + (yB + y)**2)*0.5 :
+    #        distance_mini = ((xB - x)**2 + (yB + y)**2)*0.5
+

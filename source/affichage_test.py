@@ -336,7 +336,7 @@ if __name__ == '__main__':
     plan4=""
     with open("/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test1.txt") as fic:
         plan4=fic.read()
-    plat=plateau.plateau(plan4,True)
+    plat=plateau.Plateau(plan4,True)
     print(plateau.get_nb_colonnes(plat),plateau.get_nb_lignes(plat))
-    affichage=JeuGraphique(plat,prefixe_image="./images")
+    affichage=JeuGraphique(plat,prefixe_image="/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/images")
     affichage.demarrer()
