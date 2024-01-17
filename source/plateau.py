@@ -110,11 +110,11 @@ def pos_arrivee(plateau, pos, direction):
         None | tuple: None ou une paire d'entiers indiquant la position d'arrivée.
     """
     new_pos = None
-    lgn_max = get_nb_lignes(plateau) - 1   # Donne le nombre de lignes
-    col_max = get_nb_colonnes(plateau) - 1  # Donne le nombre de colonnes
+    lgn_max = get_nb_lignes(plateau) - 1   # donne le nombre de lignes
+    col_max = get_nb_colonnes(plateau) - 1  # donne le nombre de colonnes
     
 
-    # On regarde la direction et ajuste la nouvelle position en conséquence
+    
     if direction == 'O':
         new_pos = pos_ouest(plateau, pos)
     elif direction == 'E':
@@ -123,11 +123,8 @@ def pos_arrivee(plateau, pos, direction):
         new_pos = pos_nord(plateau, pos)
     elif direction == 'S':
         new_pos = pos_sud(plateau, pos)
-    # Vérifie que la nouvelle position est dans les limites du plateau
-    if 0 <= new_pos[0] <= lgn_max and 0 <= new_pos[1] <= col_max:
-        return new_pos
-    else:
-        return None
+    return new_pos
+    
     
     
 
@@ -141,9 +138,9 @@ def get_case(plateau, pos):
     Returns:
         dict: La case qui se situe à la position pos du plateau
     """
-    if 'plateau' in plateau.keys(): 
-        case = plateau['plateau'][pos]
-        return case
+    #print('plateau' in plateau.keys())
+    
+    return plateau['plateau'][pos]
     
 
 
@@ -180,8 +177,10 @@ def poser_pacman(plateau, pacman, pos):
         pacman (str): la lettre représentant le pacman
         pos (tuple): une paire (lig,col) de deux int
     """
-    casee = case.poser_pacman(get_case(plateau,pos),pacman)
-    set_case(plateau,pos,casee)
+    
+    la_case = get_case(plateau,pos)
+    la_case["pacman"].add(pacman)
+    
 
 def poser_fantome(plateau, fantome, pos):
     """pose un fantome en position pos sur le plateau
@@ -191,8 +190,8 @@ def poser_fantome(plateau, fantome, pos):
         fantome (str): la lettre représentant le fantome
         pos (tuple): une paire (lig,col) de deux int
     """
-    casee =  case.poser_fantome(get_case(plateau,pos),fantome)
-    set_case(plateau,pos,casee)
+    case.poser_fantome(get_case(plateau,pos),fantome)
+    
     
 def poser_objet(plateau, objet, pos):
     """Pose un objet en position pos sur le plateau. Si cette case contenait déjà
@@ -270,7 +269,7 @@ def Plateau(la_chaine, complet=True):
         
     dico_final = {'nb_lignes': nb_lignes, 'nb_colonnes' : nb_colonnes, 'plateau' : plateau}     #dico plateau de la forme : {(ligne, colonne) : {case}}
     return dico_final  
-    
+                                        #plateau = {'fantome': set(), 'mur': False, 'objet': '.', 'pacman': {'B'}}, pacman = 'B', pos = (1, 7)
 
 def set_case(plateau, pos, une_case):
     """remplace la case qui se trouve en position pos du plateau par une_case
@@ -335,16 +334,7 @@ def prendre_objet(plateau, pos):
         int: l'entier représentant l'objet qui se trouvait sur la case.
         const.AUCUN indique aucun objet
     """
-    ancien_objet = get_objet(plateau,pos)
-    la_case = get_case(plateau,pos)
-    if ancien_objet in const.LES_OBJETS:
-        la_case['objet'] = const.AUCUN
-        
-
-    return ancien_objet
-    
-    
-    #return case.prendre_objet(get_case(plateau,pos))
+    return case.prendre_objet(get_case(plateau,pos))
 
 
 def deplacer_pacman(plateau, pacman, pos, direction, passemuraille=False): 
@@ -362,18 +352,22 @@ def deplacer_pacman(plateau, pacman, pos, direction, passemuraille=False):
         (int,int): une paire (lig,col) indiquant la position d'arrivée du pacman 
                    (None si le pacman n'a pas pu se déplacer)
     """
+    
     la_case = get_case(plateau,pos)
     if not pacman in case.get_pacmans(la_case):
         return None
     pos_arrive = pos_arrivee(plateau,pos,direction)
+    print(pos,pos_arrive,direction)
     if est_mur(plateau,pos_arrive):
-        if passemuraille:      
-            poser_pacman(la_case,pacman,pos_arrive)
+        if passemuraille:
+            case.prendre_pacman(la_case,pacman)      
+            poser_pacman(plateau,pacman,pos_arrive)
             return pos_arrive
         else:
             return None
     else :
-        poser_pacman(la_case,pacman,pos_arrive) 
+        case.prendre_pacman(la_case,pacman)
+        poser_pacman(plateau,pacman,pos_arrive) 
         return pos_arrive
     
 
@@ -394,9 +388,12 @@ def deplacer_fantome(plateau, fantome, pos, direction): #Lucas
     """
     if fantome not in case.get_fantomes(get_case(plateau,pos)):
         return None
-    enlever_fantome(plateau,fantome,pos)
+    
     pos_a = pos_arrivee(plateau,pos,direction)
-    poser_fantome(plateau,fantome,pos)
+    if est_mur(plateau,pos_a):
+        return None
+    case.prendre_fantome(get_case(plateau,pos),fantome)
+    poser_fantome(plateau,fantome,pos_a)
     return pos_a
 
 def case_vide(plateau):  #Lenny
@@ -442,14 +439,14 @@ def directions_possibles(plateau,pos,passemuraille=False):# by Le S
     """
     directions = 'NESO'
     res = ''
+    if passemuraille:
+        return directions
     for dir in directions:
         pos_posibble = pos_arrivee(plateau,pos,dir)
-        if not pos_posibble is None:
-            if passemuraille :
-                res += dir
-            else:
-                if not est_mur(plateau,pos):
-                    res += dir 
+        if not est_mur(plateau,pos_posibble):
+            res += dir
+            
+                
     return res
 
 
@@ -500,7 +497,7 @@ def prochaine_intersection(plateau,pos,direction):  #Lenny / Sargis
         return -1 
     if nb_dirc > 1:
         return distance
-    else: #1 chemin possible, len de dirc == 2 
+    if nb_dirc == 2 :
         if direction in dirc:
             inter = prochaine_intersection(plateau,proch_pos,direction)
             if inter == -1:

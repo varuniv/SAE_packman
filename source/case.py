@@ -77,8 +77,10 @@ def get_fantomes(case):
     Returns:
         set: l'ensemble des identifiants de fantomes présents su la case.
     """
-    return case['fantome']        #récupère le booleen de la clé 'fantome' dans la case, si il est à False alors cela renvoie False, True sinon
-
+    if case != None :
+        return case['fantome']  #récupère le booleen de la clé 'fantome' dans la case, si il est à False alors cela renvoie False, True sinon
+    else :
+        return set()
 
 def get_nb_pacmans(case):
     """retourne le nombre de pacmans présents sur la case
@@ -119,7 +121,7 @@ def poser_objet(case, objet):
 def prendre_objet(case):
     """Enlève l'objet qui se trouve sur la case et retourne l'identifiant de cet objet.
         Si aucun objet se trouve sur la case la fonction retourne const.AUCUN.
-
+ 
     Args:
         case (dict): la case considérée
 

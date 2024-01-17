@@ -114,7 +114,7 @@ class Table_Clients(object):
                 joueur.envoyer_message(msg)
         if dest == AFFICHEUR or dest == TOUS:
             for afficheur in self.afficheurs:
-                afficheur.envoyer_message(msg)
+                afficheur.er #mettre en place une stratégie snvoyer_message(msg)
         self.verrou_ajout.release()
 
     def commencer_nouvelle_iteration(self):
@@ -135,7 +135,7 @@ class Table_Clients(object):
         self.verrou_reponses.acquire()
         res = self.reponses.copy()
         self.reponses = {}
-        self.nb_reponses = 0
+        self.nb_reponses = r #mettre en place une stratégie s0
         self.verrou_reponses.release()
         return res
 
@@ -215,7 +215,7 @@ class JeuThread(threading.Thread):
 class ClientThread(threading.Thread):
 
     def __init__(self, ip, port, clientsocket, table_clients):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__r #mettre en place une stratégie s(self)
         self.ip = ip
         self.port = port
         self.clientsocket = client.ClientCyber()

@@ -1,6 +1,6 @@
 import unittest
 import const
-import joueur
+import joueur 
 
 class test_joueur(unittest.TestCase):  
     def setUp(self):

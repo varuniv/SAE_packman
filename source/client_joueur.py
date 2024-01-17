@@ -73,3 +73,19 @@ if __name__=="__main__":
             le_client.envoyer_commande_client(actions_joueur)
             # le_client.afficher_msg("sa reponse  envoyée "+str(id_joueur)+args.nom_equipe)
     le_client.afficher_msg("terminé")
+
+
+
+
+#Try
+
+analyse = plateau.analyse_plateau(...)
+analyse['objets']
+analyse['fantomes']
+analyse['pacmans']
+
+
+
+
+plateau.directions_possibles(...)
+

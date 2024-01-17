@@ -1,7 +1,7 @@
 
 import unittest
 import const
-import plateau
+import plateau 
 import case
 class test_case(unittest.TestCase):  
     def setUp(self):
@@ -354,7 +354,7 @@ class test_case(unittest.TestCase):
                               )
             self.assertTrue(fantome in case.get_fantomes(plateau.get_case(plat,pos_a)),
                             "Le déplacement du fantome "+str(fantome)+" de la position "+str(pos_d)+\
-                         " en direction de "+dir+ " arrive en "+str(pos_d)+\
+                         " en direction de "+dir+ " arrive en "+str(pos_a)+\
                          " or dans votre implémentation "+fantome+" n'est pas dans cette case"
                               )
 
