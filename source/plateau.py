@@ -554,28 +554,31 @@ def prochaine_intersection(plateau,pos,direction):  #Lenny / Sargis
         int: un entier indiquant la distance à la prochaine intersection
              -1 si la direction mène à un cul de sac.
     """
-
+    
     distance = 0
+    dirc_prec = directions_possibles(plateau, pos)
     proch_pos = pos_arrivee(plateau, pos, direction)
     dirc = directions_possibles(plateau, proch_pos)
     nb_dirc = len(dirc) 
     while nb_dirc <= 2:
-        distance += 1
-        dirc_pres = dirc
-        dirc = set(directions_possibles(plateau, proch_pos))
-        nb_dirc = len(dirc) -1
-        if nb_dirc > 3:
+        nb_dirc = len(dirc) 
+        if nb_dirc >= 3:
             return distance
-        if nb_dirc <= 0:
+        if nb_dirc <= 1:
             return -1
         if nb_dirc == 2 :
-            direction_s = dirc_pres.difference(dirc)
-            for d in direction_s:
-                direction = d
-        proch_pos = pos_arrivee(plateau, pos, direction)
+            if direction not in dirc:
+                dirc = set(dirc)
+                setdirc = dirc.difference(set(dirc_prec))
+                for d in setdirc:
+                    direction = d
+        distance += 1
+        proch_pos = pos_arrivee(plateau, proch_pos, direction)
+        dirc_prec = dirc
+        dirc = directions_possibles(plateau, proch_pos)
     if nb_dirc == 0:
         return -1  
-    return distance
+    return  distance 
     
 
 # A NE PAS DEMANDER
