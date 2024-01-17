@@ -49,6 +49,30 @@ def mon_IA(ma_couleur,carac_jeu, plan, les_joueurs):
         joueurs[joueur.get_couleur(lejoueur)]=lejoueur
     le_plateau=plateau.Plateau(plan)
     
+    #Instructions pacmans et fantômes
+
+    def zone_définie(...) :
+        """ Défini une zone précise accessible par le fantôme et le pacman
+        
+        
+        """
+        
+
+        #if passemuraille
+        plateau.directions_possibles(plateau,pos,True)
+
+        #else
+        plateau.directions_possibles(plateau,pos)
+
+
+    def objets_le_plus_intéressant(liste_pos):
+        """ Trouve l'objet le plus intéressant dans la zone définie"""
+    pass
+
+
+
+
+
     # IA complètement aléatoire
     dir_p=  random.choice("NESO")
     dir_f=  random.choice("NESO")
@@ -64,11 +88,15 @@ if __name__=="__main__":
     le_client=client.ClientCyber()
     le_client.creer_socket(args.serveur,args.port)
     le_client.enregistrement(args.nom_equipe,"joueur")
-    ok=TrueGlouton (ac_jeu,le_plateau,les_joueurs[:-1])
+    ok=True
+    while ok:
+        ok,id_joueur,le_jeu=le_client.prochaine_commande()
+        if ok:
+            carac_jeu,le_plateau,les_joueurs=le_jeu.split("--------------------\n")
+            actions_joueur=mon_IA(id_joueur,carac_jeu,le_plateau,les_joueurs[:-1])
             le_client.envoyer_commande_client(actions_joueur)
             # le_client.afficher_msg("sa reponse  envoyée "+str(id_joueur)+args.nom_equipe)
     le_client.afficher_msg("terminé")
-
 
 
 

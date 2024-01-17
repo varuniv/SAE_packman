@@ -110,11 +110,6 @@ def pos_arrivee(plateau, pos, direction):
         None | tuple: None ou une paire d'entiers indiquant la position d'arrivée.
     """
     new_pos = None
-    lgn_max = get_nb_lignes(plateau) - 1   # donne le nombre de lignes
-    col_max = get_nb_colonnes(plateau) - 1  # donne le nombre de colonnes
-    
-
-    
     if direction == 'O':
         new_pos = pos_ouest(plateau, pos)
     elif direction == 'E':
@@ -468,79 +463,16 @@ def analyse_plateau(plateau, pos, direction, distance_max):
                                     et ident est l'identifiant de l'objet, du pacman ou du fantome
             S'il n'est pas possible d'aller dans la direction indiquee a partir de pos
             la fonction retourne None
-    """ 
-    def set_case_matrice(matrice, pos, val):
-        x,y = pos
-        if  x <0:
-            x = len(matrice)-1
-        if x > len(matrice)-1:
-            x = 0
-        if y < 0:
-            y = len(matrice[0])-1
-        if y > len(matrice[0])-1:
-            y = 0
-        matrice[x][y] = val
-
-    def get_case_matrice(matrice, pos):
-        x,y = pos
-        if  x <0:
-            x = len(matrice)-1
-        if x > len(matrice)-1:
-            x = 0
-        if y < 0:
-            y = len(matrice[0])-1
-        if y > len(matrice[0])-1:
-            y = 0
-        return matrice[x][y]
-        
-
-    def voisin(matrice, pos):
-        x,y = pos
-        voisins = []
-    for direction in "NOES":
-        voisins.append(pos_arrivee(plateau, pos, direction))
-        voisins_possible = []
-        for voisin in voisins:
-            if get_case_matrice(matrice, voisin) != "X":
-                voisins_possible.append(voisin)
-        return voisins_possible
-    if direction not in directions_possibles(plateau, pos):
-        return None
-    
+    """
+    #'N':{'objets': [(2, '@'), (3, '!'), (3, '.'), (3, '.'), (4, '.'), (4, '.'), (4, '.'), (5, '.'), (5, '.'), (5, '.'), (5, '~')],
+    # 'pacmans': [(3, 'D'), (5, 'C')], 'fantomes': [(3, 'b'), (5, 'd')]}
     pos = pos_arrivee(plateau, pos, direction)
     res = {'objets':[], 'pacmans':[], 'fantomes':[]}
     calque_plateau = []
-    for ligne in plateau['plateau']:
-        calque_ligne = []
-        for case_matrice in ligne:
-            if case.est_mur(case_matrice):
-                calque_ligne.append("X")
-            else:
-                calque_ligne.append(None)
-        calque_plateau.append(calque_ligne)
-    set_case_matrice(calque_plateau, pos, 1)
-    nbr_pas = 1
-    distance_pos = {1:[pos]}
-    while nbr_pas < distance_max:
-        for x in range(get_nb_lignes(plateau)):
-            for y in range(get_nb_colonnes(plateau)):
-                if get_case_matrice(calque_plateau, (x,y)) == None and nbr_pas in [get_case_matrice(calque_plateau, voisin) for voisin in voisin(calque_plateau, (x,y))]:
-                    set_case_matrice(calque_plateau, (x,y), nbr_pas+1)
-                    if nbr_pas+1 not in distance_pos:
-                        distance_pos[nbr_pas+1] = []
-                        distance_pos[nbr_pas+1].append((x,y))
-                    else:
-                        distance_pos[nbr_pas+1].append((x,y))
-        nbr_pas += 1
-    for distance in distance_pos.keys():
-        for pos in distance_pos[distance]:
-            if get_objet(plateau, pos) != const.AUCUN:
-                res['objets'].append((distance, get_objet(plateau, pos)))
-            for pacman in case.get_pacmans(get_case(plateau, pos)):
-                res['pacmans'].append((distance, pacman))
-            for fantome in case.get_fantomes(get_case(plateau, pos)):
-                res['fantomes'].append((distance, fantome))
-    return res
+    lgn_max = get_nb_lignes(plateau) - 1   # donne le nombre de lignes
+    col_max = get_nb_colonnes(plateau) - 1  # donne le nombre de colonnes
+    
+
 def prochaine_intersection(plateau,pos,direction):  #Lenny / Sargis
     """calcule la distance de la prochaine intersection
         si on s'engage dans la direction indiquée
