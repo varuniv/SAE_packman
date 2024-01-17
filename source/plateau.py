@@ -357,7 +357,6 @@ def deplacer_pacman(plateau, pacman, pos, direction, passemuraille=False):
     if not pacman in case.get_pacmans(la_case):
         return None
     pos_arrive = pos_arrivee(plateau,pos,direction)
-    print(pos,pos_arrive,direction)
     if est_mur(plateau,pos_arrive):
         if passemuraille:
             case.prendre_pacman(la_case,pacman)      
@@ -444,38 +443,104 @@ def directions_possibles(plateau,pos,passemuraille=False):# by Le S
     for dir in directions:
         pos_posibble = pos_arrivee(plateau,pos,dir)
         if not est_mur(plateau,pos_posibble):
-            res += dir
-            
-                
+            res += dir           
     return res
 
 
     
 #---------------------------------------------------------#
 
-
 def analyse_plateau(plateau, pos, direction, distance_max):
-    """calcul les distances entre la position pos est les différents objets et
-        joueurs du plateau si on commence par partir dans la direction indiquée
-        en se limitant à la distance max. Si il n'est pas possible d'aller dans la
-        direction indiquée à partir de pos, la fonction doit retourner None
+    """calcul les distances entre la position pos est les differents objets et
+        joueurs du plateau si on commence par partir dans la direction indiquee
+        en se limitant a la distance max. Si il n'est pas possible d'aller dans la
+        direction indiquee a partir de pos, la fonction doit retourner None
 
     Args:
-        plateau (dict): le plateau considéré
+        plateau (dict): le plateau considere
         pos (tuple): une paire d'entiers indiquant la postion de calcul des distances
         distance_max (int): un entier indiquant la distance limite de la recherche
     Returns:
         dict: un dictionnaire de listes. 
-                Les clés du dictionnaire sont 'objets', 'pacmans' et 'fantomes'
+                Les cles du dictionnaire sont 'objets', 'pacmans' et 'fantomes'
                 Les valeurs du dictionnaire sont des listes de paires de la forme
-                    (dist,ident) où dist est la distance de l'objet, du pacman ou du fantome
+                    (dist,ident) ou dist est la distance de l'objet, du pacman ou du fantome
                                     et ident est l'identifiant de l'objet, du pacman ou du fantome
-            S'il n'est pas possible d'aller dans la direction indiquée à partir de pos
+            S'il n'est pas possible d'aller dans la direction indiquee a partir de pos
             la fonction retourne None
     """ 
+    def set_case_matrice(matrice, pos, val):
+        x,y = pos
+        if  x <0:
+            x = len(matrice)-1
+        if x > len(matrice)-1:
+            x = 0
+        if y < 0:
+            y = len(matrice[0])-1
+        if y > len(matrice[0])-1:
+            y = 0
+        matrice[x][y] = val
+
+    def get_case_matrice(matrice, pos):
+        x,y = pos
+        if  x <0:
+            x = len(matrice)-1
+        if x > len(matrice)-1:
+            x = 0
+        if y < 0:
+            y = len(matrice[0])-1
+        if y > len(matrice[0])-1:
+            y = 0
+        return matrice[x][y]
+        
+
+    def voisin(matrice, pos):
+        x,y = pos
+        voisins = []
+    for direction in "NOES":
+        voisins.append(pos_arrivee(plateau, pos, direction))
+        voisins_possible = []
+        for voisin in voisins:
+            if get_case_matrice(matrice, voisin) != "X":
+                voisins_possible.append(voisin)
+        return voisins_possible
+    if direction not in directions_possibles(plateau, pos):
+        return None
     
-
-
+    pos = pos_arrivee(plateau, pos, direction)
+    res = {'objets':[], 'pacmans':[], 'fantomes':[]}
+    calque_plateau = []
+    for ligne in plateau['plateau']:
+        calque_ligne = []
+        for case_matrice in ligne:
+            if case.est_mur(case_matrice):
+                calque_ligne.append("X")
+            else:
+                calque_ligne.append(None)
+        calque_plateau.append(calque_ligne)
+    set_case_matrice(calque_plateau, pos, 1)
+    nbr_pas = 1
+    distance_pos = {1:[pos]}
+    while nbr_pas < distance_max:
+        for x in range(get_nb_lignes(plateau)):
+            for y in range(get_nb_colonnes(plateau)):
+                if get_case_matrice(calque_plateau, (x,y)) == None and nbr_pas in [get_case_matrice(calque_plateau, voisin) for voisin in voisin(calque_plateau, (x,y))]:
+                    set_case_matrice(calque_plateau, (x,y), nbr_pas+1)
+                    if nbr_pas+1 not in distance_pos:
+                        distance_pos[nbr_pas+1] = []
+                        distance_pos[nbr_pas+1].append((x,y))
+                    else:
+                        distance_pos[nbr_pas+1].append((x,y))
+        nbr_pas += 1
+    for distance in distance_pos.keys():
+        for pos in distance_pos[distance]:
+            if get_objet(plateau, pos) != const.AUCUN:
+                res['objets'].append((distance, get_objet(plateau, pos)))
+            for pacman in case.get_pacmans(get_case(plateau, pos)):
+                res['pacmans'].append((distance, pacman))
+            for fantome in case.get_fantomes(get_case(plateau, pos)):
+                res['fantomes'].append((distance, fantome))
+    return res
 def prochaine_intersection(plateau,pos,direction):  #Lenny / Sargis
     """calcule la distance de la prochaine intersection
         si on s'engage dans la direction indiquée
@@ -489,36 +554,28 @@ def prochaine_intersection(plateau,pos,direction):  #Lenny / Sargis
         int: un entier indiquant la distance à la prochaine intersection
              -1 si la direction mène à un cul de sac.
     """
-    proch_pos = pos_arrivee(plateau,pos,direction) #on avance
-    dirc = directions_possibles(plateau,proch_pos) #les chemains possible
-    nb_dirc = len(dirc) -1 #le nb de chemains moins d'ou on viens
-    distance = 1    #
+
+    distance = 0
+    proch_pos = pos_arrivee(plateau, pos, direction)
+    dirc = directions_possibles(plateau, proch_pos)
+    nb_dirc = len(dirc) 
+    while nb_dirc <= 2:
+        distance += 1
+        dirc_pres = dirc
+        dirc = set(directions_possibles(plateau, proch_pos))
+        nb_dirc = len(dirc) -1
+        if nb_dirc > 3:
+            return distance
+        if nb_dirc <= 0:
+            return -1
+        if nb_dirc == 2 :
+            direction_s = dirc_pres.difference(dirc)
+            for d in direction_s:
+                direction = d
+        proch_pos = pos_arrivee(plateau, pos, direction)
     if nb_dirc == 0:
-        return -1 
-    if nb_dirc > 1:
-        return distance
-    if nb_dirc == 2 :
-        if direction in dirc:
-            inter = prochaine_intersection(plateau,proch_pos,direction)
-            if inter == -1:
-                return -1
-            else:
-                return distance + inter
-        else:
-            inverse = 'SONE'
-            i_inverse = dirc.find(direction)
-            d = inverse[i_inverse] 
-            if dirc[0] == d :
-                d = dirc[1]
-            else:
-                d = dirc[0]
-            inter = prochaine_intersection(plateau,proch_pos,d)
-            if inter == -1:
-                return -1
-            else:
-                return distance + inter   
-    
-    
+        return -1  
+    return distance
     
 
 # A NE PAS DEMANDER
@@ -552,4 +609,5 @@ def plateau_2_str(plateau):
         for fantome, lig, col in fantomes:
             res += str(fantome)+";"+str(lig)+";"+str(col)+"\n"
         return res
+
 
