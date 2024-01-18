@@ -443,7 +443,14 @@ def directions_possibles(plateau,pos,passemuraille=False):# by Le S
 
 
 def inverse(direction):
-    
+    """donne l'inverse de la direction donné
+
+    Args:
+        direction (str): 'NESO'
+
+    Returns:
+        str: 
+    """    
     if direction == 'O':
         return 'E'
     elif direction == 'E':
@@ -481,20 +488,9 @@ def analyse_plateau(plateau, pos, direction, distance_max):
         return None
     res = {'objets':[], 'pacmans':[], 'fantomes':[]}
     positions = {pos_arrivee(plateau,pos,direction)} 
-    if not est_mur(plateau,p):
-                la_case = get_case(plateau,p)
-                positions.add(p)
-                fantomes = case.get_fantomes(la_case)
-                for fant in fantomes:
-                    res['fantomes'].append((1,fant)) 
-                pacman = case.get_pacmans(la_case)
-                for pac in pacman:
-                    res['pacmans'].append((1,pac)) 
-                obj = case.get_objet(la_case)
-                if const.AUCUN != obj:
-                    res['objets'].append((1,obj))
-    distance = 2
     has_been = set()
+    collect_info(plateau,p,res,positions,1,has_been)
+    distance = 2
     while   distance <= distance_max :
         vois = set()
         for p in positions:
@@ -507,19 +503,33 @@ def analyse_plateau(plateau, pos, direction, distance_max):
             vois = vois.union(v)
         positions = set()
         for p in vois:
-            if not est_mur(plateau,p) and p not in has_been:
-                la_case = get_case(plateau,p)
-                positions.add(p)
-                fantomes = case.get_fantomes(la_case)
-                for fant in fantomes:
-                    res['fantomes'].append((distance,fant)) 
-                pacman = case.get_pacmans(la_case)
-                for pac in pacman:
-                    res['pacmans'].append((distance,pac)) 
-                obj = case.get_objet(la_case)
-                if const.AUCUN != obj:
-                    res['objets'].append((distance,obj))
+            collect_info(plateau, p, res, positions, distance, has_been)
         distance +=1
+    return res
+
+def collect_info(plateau, p, res={'objets':[], 'pacmans':[], 'fantomes':[]}, positions=set(), distance=0, has_been=set()):
+    """_renvoi l'informaion de la case en fomrat {'objets':[], 'pacmans':[], 'fantomes':[]}
+
+    Args:
+        plateau (dics): plateau
+        p (tuple): position 
+        res (dict, optional): les resultat. Defaults to {'objets':[], 'pacmans':[], 'fantomes':[]}.
+        positions (sset, optional): les positions a visiter. Defaults to set().
+        distance (int, optional): _description_. Defaults to 0.
+        has_been (set, optional): les cases deja analysé. Defaults to set().
+    """    
+    if not est_mur(plateau,p) and p not in has_been:
+        la_case = get_case(plateau,p)
+        positions.add(p)
+        fantomes = case.get_fantomes(la_case)
+        for fant in fantomes:
+            res['fantomes'].append((distance,fant)) 
+        pacman = case.get_pacmans(la_case)
+        for pac in pacman:
+            res['pacmans'].append((distance,pac)) 
+        obj = case.get_objet(la_case)
+        if const.AUCUN != obj:
+            res['objets'].append((distance,obj))
     return res
          
 
