@@ -3,13 +3,13 @@ import unittest
 import const
 import plateau 
 import case
-class test_case(unittest.TestCase):  
+class test_case(unittest.TestCase):  #"/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test1.txt"
     def setUp(self):
-        with open("/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test1.txt") as fic:
+        with open("C:/Users/sargi/Desktop/SAE_packman/source/test1.txt") as fic:
             self.plateau1=fic.read()
-        with open("/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test2.txt") as fic:
+        with open("C:/Users/sargi/Desktop/SAE_packman/source/test2.txt") as fic:
             self.plateau2=fic.read()
-        with open("/home/iut45/Etudiants/o22306517/Cour/SAE_packman/source/test3.txt") as fic:
+        with open("C:/Users/sargi/Desktop/SAE_packman/source/test3.txt") as fic:
             self.plateau3=fic.read()
 
 
