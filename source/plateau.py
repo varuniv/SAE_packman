@@ -466,35 +466,46 @@ def analyse_plateau(plateau, pos, direction, distance_max):
     """
     #'N':{'objets': [(2, '@'), (3, '!'), (3, '.'), (3, '.'), (4, '.'), (4, '.'), (4, '.'), (5, '.'), (5, '.'), (5, '.'), (5, '~')],
     # 'pacmans': [(3, 'D'), (5, 'C')], 'fantomes': [(3, 'b'), (5, 'd')]}
+    #calque_plateau = [] #matrice de type [[case,case],[],[]]
+    #lgn_max = get_nb_lignes(plateau) - 1   # donne le nombre de lignes
+    #col_max = get_nb_colonnes(plateau) - 1  # donne le nombre de colonnes
+    #pi = prochaine_intersection(plateau,pos,direction)
     res = {'objets':[], 'pacmans':[], 'fantomes':[]}
     positions = {pos_arrivee(plateau,pos,direction)} 
     distance = 2
-    while   distance-1 <= distance_max :
+    while   distance <= distance_max :
         vois = set()
         for p in positions:
-            vois = vois.union(set([pos_arrivee(plateau,p,x) for x in directions_possibles(plateau,p)]))
+            v = []
+            for x in directions_possibles(plateau,p):
+                #if not ('NESO'.find(direction) == 'SONE'.find(x)): 
+                pox_x = pos_arrivee(plateau,p,x)
+                if pox_x not in positions: 
+                    v.append(pos_arrivee(plateau,p,x))
+            vois = vois.union(set(v))
         positions = set()
         for p in vois:
             if not est_mur(plateau,p) :
                 la_case = get_case(plateau,p)
+                print(la_case,p)
                 positions.add(p)
                 fantomes = case.get_fantomes(la_case)
                 for fant in fantomes:
-                    
                     res['fantomes'].append((distance,fant)) 
                 pacman = case.get_pacmans(la_case)
                 for pac in pacman:
-        
                     res['pacmans'].append((distance,pac)) 
                 obj = case.get_objet(la_case)
                 if const.AUCUN != obj:
-                    
                     res['objets'].append((distance,obj))
         distance +=1
+    print(res)
     return res
          
-
-
+{'objets': [(2, '@'), (3, '.'), (3, '.'), (3, '!'), (4, '.'), (4, '@'), (4, '.'), (4, '.'), (5, '.'), (5, '.'), (5, '.'), (5, '.'), (5, '.'), (5, '!'), (5, '~')], 
+ 'pacmans': [(3, 'D'), (5, 'C'), (5, 'D')], 'fantomes': [(3, 'b'), (5, 'd'), (5, 'b')]}
+ #'N':{'objets': [(2, '@'), (3, '!'), (3, '.'), (3, '.'), (4, '.'), (4, '.'), (4, '.'), (5, '.'), (5, '.'), (5, '.'), (5, '~')],
+    # 'pacmans': [(3, 'D'), (5, 'C')], 'fantomes': [(3, 'b'), (5, 'd')]}
 
 
 def prochaine_intersection(plateau,pos,direction):  #Lenny / Sargis
