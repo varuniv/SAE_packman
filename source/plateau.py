@@ -476,28 +476,34 @@ def analyse_plateau(plateau, pos, direction, distance_max):
     """
     #'N':{'objets': [(2, '@'), (3, '!'), (3, '.'), (3, '.'), (4, '.'), (4, '.'), (4, '.'), (5, '.'), (5, '.'), (5, '.'), (5, '~')],
     # 'pacmans': [(3, 'D'), (5, 'C')], 'fantomes': [(3, 'b'), (5, 'd')]}
-    #pi = prochaine_intersection(plateau,pos,direction)
-    calque_plateau = [] #matrice de type [[case,case],[],[]]
-    if est_mur(plateau,pos_arrivee(plateau,pos,direction)):
+    p = pos_arrivee(plateau,pos,direction)
+    if est_mur(plateau,p):
         return None
-    lgn_max = get_nb_lignes(plateau) - 1   # donne le nombre de lignes
-    col_max = get_nb_colonnes(plateau) - 1  # donne le nombre de colonnes
     res = {'objets':[], 'pacmans':[], 'fantomes':[]}
     positions = {pos_arrivee(plateau,pos,direction)} 
+    if not est_mur(plateau,p):
+                la_case = get_case(plateau,p)
+                positions.add(p)
+                fantomes = case.get_fantomes(la_case)
+                for fant in fantomes:
+                    res['fantomes'].append((1,fant)) 
+                pacman = case.get_pacmans(la_case)
+                for pac in pacman:
+                    res['pacmans'].append((1,pac)) 
+                obj = case.get_objet(la_case)
+                if const.AUCUN != obj:
+                    res['objets'].append((1,obj))
     distance = 2
     has_been = set()
-    
-    while   distance < distance_max :
+    while   distance <= distance_max :
         vois = set()
         for p in positions:
             v = set()
             has_been.add(p)
             for x in directions_possibles(plateau,p):
-                inv = inverse(direction)
-                if inv != x :
-                    pox_x = pos_arrivee(plateau,p,x)
-                    if pox_x not in positions: 
-                        v.add(pos_arrivee(plateau,p,x))
+                pox_x = pos_arrivee(plateau,p,x)
+                if pox_x not in positions: 
+                    v.add(pos_arrivee(plateau,p,x))
             vois = vois.union(v)
         positions = set()
         for p in vois:
